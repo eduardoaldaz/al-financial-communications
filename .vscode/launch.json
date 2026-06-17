@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Sandbox",
+            "type": "al",
+            "request": "launch",
+            "environmentType": "Sandbox",
+            "environmentName": "Sandbox_190126",
+            "server": "https://businesscentral.dynamics.com",
+            "tenant": "7bd617d8-1150-4669-b1fe-3fddd532dd57",
+            "startupCompany": "Global Food Link SL"
+        }
+    ]
+}

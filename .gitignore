@@ -1,0 +1,6 @@
+.alpackages/
+.snapshots/
+*.app
+output/
+.output/
+.vs/
