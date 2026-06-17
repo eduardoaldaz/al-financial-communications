@@ -4,3 +4,6 @@
 output/
 .output/
 .vs/
+.vscode/launch.json
+.vscode/rad.json
+.claude/
