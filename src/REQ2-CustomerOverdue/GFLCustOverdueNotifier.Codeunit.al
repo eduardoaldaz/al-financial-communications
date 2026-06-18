@@ -135,8 +135,12 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         Customer: Record Customer;
     begin
         Customer.SetRange("Print Statements", true);
-        Customer.SetRange("GFL Last Statement Sent Date", WorkDate());
-        exit(not Customer.IsEmpty());
+        if Customer.FindSet() then
+            repeat
+                if Customer."GFL Last Statement Sent Date" = WorkDate() then
+                    exit(true);
+            until Customer.Next() = 0;
+        exit(false);
     end;
 
     local procedure UpdateLastSentDate(var Customer: Record Customer)
