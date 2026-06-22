@@ -2,7 +2,7 @@
   "id": "f1a2b3c4-d5e6-7890-abcd-ef1234567890",
   "name": "GFL Financial Communications",
   "publisher": "Global Food Link S.L.",
-  "version": "1.0.0.0",
+  "version": "1.1.0.0",
   "brief": "Automatización de comunicaciones financieras: extractos a clientes y avisos de pago a proveedores",
   "description": "REQ2: Envío programado de deuda pendiente a clientes. REQ3: Envío automático de aviso de pago a proveedores al registrar pagos.",
   "privacyStatement": "",
