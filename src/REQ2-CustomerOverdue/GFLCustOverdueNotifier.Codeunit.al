@@ -185,6 +185,7 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         FileName: Text;
         OldLanguageId: Integer;
         LanguageId: Integer;
+        CcEmail: Text[250];
     begin
         OldLanguageId := GlobalLanguage();
         LanguageId := OldLanguageId;
@@ -214,9 +215,23 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         if not TempEmailAccount.FindFirst() then
             Error('No se encontró la cuenta de correo "%1" en BC.', Setup."Customer Email From Address");
 
+        CcEmail := GetSalespersonEmail(Customer."Salesperson Code");
         EmailMessage.Create(SendToEmail, GetEmailSubject(LanguageCode), GetEmailBody(LanguageCode, Setup), true);
+        if CcEmail <> '' then
+            EmailMessage.AddRecipient(Enum::"Email Recipient Type"::Cc, CcEmail);
         EmailMessage.AddAttachment(FileName, 'application/pdf', ReportInStream);
         Email.Send(EmailMessage, TempEmailAccount);
+    end;
+
+    local procedure GetSalespersonEmail(SalespersonCode: Code[20]): Text[250]
+    var
+        SalespersonPurchaser: Record "Salesperson/Purchaser";
+    begin
+        if SalespersonCode = '' then
+            exit('');
+        if not SalespersonPurchaser.Get(SalespersonCode) then
+            exit('');
+        exit(SalespersonPurchaser."E-Mail");
     end;
 
     local procedure GetEmailSubject(LanguageCode: Code[10]): Text
