@@ -496,6 +496,7 @@
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <Format>dd/MM/yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -527,6 +528,7 @@
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <Format>HH:mm:ss</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -656,8 +658,6 @@
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
-                                    <FontWeight>=IIF(Fields!Result.Value = 1,"Bold","Normal")</FontWeight>
-                                    <Color>=IIF(Fields!Result.Value = 1,"#CC0000","#283925")</Color>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
