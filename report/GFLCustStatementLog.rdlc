@@ -654,7 +654,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Result.Value = 0,"Enviado","Error")</Value>
+                                  <Value>=Fields!Result.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>

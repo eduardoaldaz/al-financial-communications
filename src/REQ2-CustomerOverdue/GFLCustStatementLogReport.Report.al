@@ -18,7 +18,7 @@ report 50300 "GFL Statement Log"
             column(EmailTo; "Email To") { }
             column(OverdueAmount; "Overdue Amount") { }
             column(NoOfDocuments; "No. of Documents") { }
-            column(Result; Result) { }
+            column(Result; Format(Result)) { }
             column(ErrorMessage; "Error Message") { }
             column(SentBy; "Sent By") { }
             column(ReportID; "Report ID") { }
