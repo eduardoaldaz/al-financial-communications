@@ -1105,6 +1105,7 @@
         <BottomMargin>1.5cm</BottomMargin>
         <Style />
       </Page>
+      <Width>26.7cm</Width>
     </ReportSection>
   </ReportSections>
   <DataSets>
