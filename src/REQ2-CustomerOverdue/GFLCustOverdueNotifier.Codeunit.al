@@ -15,10 +15,13 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
     procedure SendForCustomer(Customer: Record Customer)
     var
         Setup: Record "GFL Fin. Comm. Setup";
+        StatLog: Record "GFL Cust. Statement Log";
         CutoffDate: Date;
         ReportId: Integer;
         SendToEmail: Text[250];
         LanguageCode: Code[10];
+        OverdueAmount: Decimal;
+        DocCount: Integer;
     begin
         Setup.GetSetup();
         ValidateSetup(Setup);
@@ -37,10 +40,16 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
             exit;
         end;
 
-        if TrySendReportToCustomer(Customer, ReportId, SendToEmail, LanguageCode, CutoffDate, Setup) then
-            Message('Email enviado correctamente a %1 (%2) → %3.', Customer."No.", Customer.Name, SendToEmail)
-        else
+        GetOverdueStats(Customer."No.", CutoffDate, OverdueAmount, DocCount);
+
+        if TrySendReportToCustomer(Customer, ReportId, SendToEmail, LanguageCode, CutoffDate, Setup) then begin
+            InsertLogEntry(Customer, SendToEmail, OverdueAmount, DocCount, ReportId, StatLog."Result"::Sent, '');
+            Message('Email enviado correctamente a %1 (%2) → %3.', Customer."No.", Customer.Name, SendToEmail);
+        end else begin
+            InsertLogEntry(Customer, SendToEmail, OverdueAmount, DocCount, ReportId, StatLog."Result"::Error,
+                CopyStr(GetLastErrorText(), 1, 250));
             Message('Error al enviar email a %1 (%2).', Customer."No.", Customer.Name);
+        end;
     end;
 
     procedure SendOverdueNotifications()
@@ -102,9 +111,12 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
 
     local procedure ProcessCustomer(Customer: Record Customer; CutoffDate: Date; Setup: Record "GFL Fin. Comm. Setup"; SkipChecks: Boolean): Integer
     var
+        StatLog: Record "GFL Cust. Statement Log";
         ReportId: Integer;
         SendToEmail: Text[250];
         LanguageCode: Code[10];
+        OverdueAmount: Decimal;
+        DocCount: Integer;
     begin
         // En modo automático (Job Queue), saltar clientes ya enviados hoy
         if not SkipChecks then
@@ -121,11 +133,16 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         if not CustomerHasOverdueEntries(Customer."No.", CutoffDate) then
             exit(0);
 
+        GetOverdueStats(Customer."No.", CutoffDate, OverdueAmount, DocCount);
+
         if TrySendReportToCustomer(Customer, ReportId, SendToEmail, LanguageCode, CutoffDate, Setup) then begin
+            InsertLogEntry(Customer, SendToEmail, OverdueAmount, DocCount, ReportId, StatLog."Result"::Sent, '');
             UpdateLastSentDate(Customer);
             exit(1);
         end;
 
+        InsertLogEntry(Customer, SendToEmail, OverdueAmount, DocCount, ReportId, StatLog."Result"::Error,
+            CopyStr(GetLastErrorText(), 1, 250));
         LogMessage(StrSubstNo('Error enviando a cliente %1 (%2).', Customer."No.", Customer.Name));
         exit(2);
     end;
@@ -456,6 +473,51 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         ReportXml.AppendLine('</DataItems>');
         ReportXml.AppendLine('</ReportParameters>');
         exit(ReportXml.ToText());
+    end;
+
+    local procedure GetOverdueStats(CustomerNo: Code[20]; CutoffDate: Date; var TotalAmount: Decimal; var DocCount: Integer)
+    var
+        CustLE: Record "Cust. Ledger Entry";
+    begin
+        TotalAmount := 0;
+        DocCount := 0;
+        CustLE.SetRange("Customer No.", CustomerNo);
+        CustLE.SetRange(Open, true);
+        CustLE.SetFilter("Document Type", '%1|%2',
+            CustLE."Document Type"::Invoice,
+            CustLE."Document Type"::"Credit Memo");
+        CustLE.SetFilter("Due Date", '..%1', CutoffDate);
+        if CustLE.FindSet() then
+            repeat
+                CustLE.CalcFields("Remaining Amount");
+                TotalAmount += CustLE."Remaining Amount";
+                DocCount += 1;
+            until CustLE.Next() = 0;
+    end;
+
+    local procedure InsertLogEntry(Customer: Record Customer; SendToEmail: Text[250]; OverdueAmount: Decimal; DocCount: Integer; ReportId: Integer; ResultOption: Option; ErrorMsg: Text[250])
+    var
+        StatLog: Record "GFL Cust. Statement Log";
+        SentBy: Code[50];
+    begin
+        if GuiAllowed then
+            SentBy := CopyStr(UserId(), 1, 50)
+        else
+            SentBy := 'JOB QUEUE';
+
+        StatLog.Init();
+        StatLog."Customer No." := Customer."No.";
+        StatLog."Customer Name" := CopyStr(Customer.Name, 1, 100);
+        StatLog."Notification Date" := WorkDate();
+        StatLog."Notification Time" := Time();
+        StatLog."Email To" := SendToEmail;
+        StatLog."Overdue Amount" := OverdueAmount;
+        StatLog."No. of Documents" := DocCount;
+        StatLog.Result := ResultOption;
+        StatLog."Error Message" := ErrorMsg;
+        StatLog."Sent By" := SentBy;
+        StatLog."Report ID" := ReportId;
+        StatLog.Insert();
     end;
 
     local procedure LogMessage(Msg: Text)
