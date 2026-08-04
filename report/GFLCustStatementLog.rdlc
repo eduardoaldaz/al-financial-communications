@@ -781,7 +781,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=CountRows("Details") &amp; " envíos"</Value>
+                                  <Value>=CountRows("DataSet_Result") &amp; " envíos"</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -869,7 +869,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!OverdueAmount.Value,"Details")</Value>
+                                  <Value>=Sum(Fields!OverdueAmount.Value,"DataSet_Result")</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
@@ -900,7 +900,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!NoOfDocuments.Value,"Details")</Value>
+                                  <Value>=Sum(Fields!NoOfDocuments.Value,"DataSet_Result")</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>8pt</FontSize>
