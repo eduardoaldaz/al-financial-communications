@@ -73,30 +73,6 @@ page 50301 "GFL Cust. Statement Log"
         }
     }
 
-    actions
-    {
-        area(Processing)
-        {
-            action(Print)
-            {
-                Caption = 'Imprimir';
-                ApplicationArea = All;
-                Image = Print;
-                ToolTip = 'Imprime el registro de envíos aplicando los filtros actuales de la vista.';
-                trigger OnAction()
-                var
-                    LogEntry: Record "GFL Cust. Statement Log";
-                    StatReport: Report "GFL Statement Log";
-                begin
-                    LogEntry.Copy(Rec);
-                    LogEntry.SetView(Rec.GetView());
-                    StatReport.SetTableView(LogEntry);
-                    StatReport.Run();
-                end;
-            }
-        }
-    }
-
     var
         ResultStyle: Text;
 

@@ -9,6 +9,5 @@ permissionset 50300 "GFL Fin. Comm. - All"
         codeunit "GFL Vendor Remittance Sender" = X,
         codeunit "GFL Fin. Comm. Install" = X,
         page "GFL Fin. Comm. Setup" = X,
-        page "GFL Cust. Statement Log" = X,
-        report "GFL Statement Log" = X;
+        page "GFL Cust. Statement Log" = X;
 }
