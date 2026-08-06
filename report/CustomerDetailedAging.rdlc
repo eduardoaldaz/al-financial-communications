@@ -543,7 +543,7 @@
                         <Textbox Name="Cust_Ledger_Entry_Remaining_Amt_LCY_Caption">
                           <CanGrow>true</CanGrow>
                           <UserSort>
-                            <SortExpression>=Sum(Fields!Cust_Ledger_Entry_Remaining_Amt_LCY_.Value)</SortExpression>
+                            <SortExpression>=Sum(Fields!Cust_Ledger_Entry_Remaining_Amount_.Value)</SortExpression>
                             <SortExpressionScope>Customer_Group</SortExpressionScope>
                             <SortTarget>DataSet_Result</SortTarget>
                           </UserSort>
@@ -1875,12 +1875,12 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=sum(Fields!Cust_Ledger_Entry_Remaining_Amt_LCY_.Value)</Value>
+                                  <Value>=sum(Fields!Cust_Ledger_Entry_Remaining_Amount_.Value)</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>7.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <Format>=Fields!Cust_Ledger_Entry_Remaining_Amt_LCY_Format.Value</Format>
+                                    <Format>=Fields!Cust_Ledger_Entry_Remaining_Amount_Format.Value</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
