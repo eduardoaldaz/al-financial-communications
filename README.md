@@ -13,9 +13,12 @@ src/
 ├── Setup/
 │   ├── GFLFinCommSetup.Table.al                         → Table 50300 - Configuración
 │   ├── GFLFinCommSetupPage.Page.al                      → Page 50300 - Página configuración
-│   └── GFLFinCommInstall.Codeunit.al                    → Codeunit 50302 - Instalación
+│   ├── GFLFinCommInstall.Codeunit.al                    → Codeunit 50302 - Instalación
+│   └── GFLFinCommPermissionSet.PermissionSet.al         → PermissionSet 50300 - Permisos PTE
 ├── REQ2-CustomerOverdue/
 │   ├── GFLCustOverdueNotifier.Codeunit.al               → Codeunit 50300 - Envío deuda pendiente
+│   ├── GFLCustStatementLog.Table.al                     → Table 50301 - Registro de envíos (audit log)
+│   ├── GFLCustStatementLogPage.Page.al                  → Page 50301 - Consulta registro de envíos
 │   ├── GFLCustomerExt.TableExtension.al                 → TableExt 50302 - Campo fecha último envío
 │   └── GFLCustomerAgingExt.ReportExt.al                 → ReportExt sobre Report 106
 └── REQ3-VendorRemittance/
@@ -50,8 +53,10 @@ src/
 - Tipo objeto: Codeunit | ID: 50301
 - Recurrencia: Cada 5 minutos | Horario: 07:00 - 20:00
 
-## PENDIENTE antes de producción
-1. Capturar XML real del RequestPage del Report 106 (ejecutar manualmente y capturar)
-2. Probar envío completo en sandbox con clientes y proveedores de prueba
-3. Verificar que los emails se reciben correctamente
-4. Validar formatos de PDF generados
+## Audit log REQ 2
+Cada envío (exitoso o fallido) queda registrado en **Table 50301**. Para consultarlo,
+buscar "Registro envíos extracto clientes" en BC. Campos relevantes:
+- **Resultado**: Enviado / Error
+- **Enviado por**: nombre de usuario (envío manual) o `JOB QUEUE` (automático)
+- **Importe vencido** y **Nº documentos** en el momento del envío
+- **Mensaje de error** si el envío falló
