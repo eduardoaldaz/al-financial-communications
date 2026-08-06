@@ -1573,14 +1573,17 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value />
+                                  <Value>="Total " &amp; IIf(Fields!TempCurrencyTotalBuffer_Currency_Code_.Value = "", "EUR", Fields!TempCurrencyTotalBuffer_Currency_Code_.Value) &amp; ":"</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>7.5pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <Style>
@@ -1601,7 +1604,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Total " &amp; IIf(Fields!TempCurrencyTotalBuffer_Currency_Code_.Value = "", "EUR", Fields!TempCurrencyTotalBuffer_Currency_Code_.Value) &amp; ":"</Value>
+                                  <Value />
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>7.5pt</FontSize>
