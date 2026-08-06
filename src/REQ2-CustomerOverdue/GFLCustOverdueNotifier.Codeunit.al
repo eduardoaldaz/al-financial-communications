@@ -62,6 +62,46 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         RunOverdueNotifications(true);
     end;
 
+    procedure PreviewOverdueStatement(Customer: Record Customer)
+    var
+        Setup: Record "GFL Fin. Comm. Setup";
+        TempBlob: Codeunit "Temp Blob";
+        ReportOutStream: OutStream;
+        ReportInStream: InStream;
+        CustomerFilter: Record Customer;
+        ReportId: Integer;
+        CutoffDate: Date;
+        SendToEmail: Text[250];
+        LanguageCode: Code[10];
+        FileName: Text;
+    begin
+        Setup.GetSetup();
+        if Setup."Customer Overdue Report ID" = 0 then
+            Error('Debe configurar el ID del informe de Deuda Pendiente en Config. Comunicaciones Financieras GFL.');
+
+        CutoffDate := CalcDate(StrSubstNo('<-%1D>', Setup."Overdue Days Threshold"), WorkDate());
+        ResolveCustomerConfig(Customer, Setup, ReportId, SendToEmail, LanguageCode);
+
+        if not CustomerHasOverdueEntries(Customer."No.", CutoffDate) then begin
+            Message('El cliente %1 (%2) no tiene facturas vencidas según el umbral configurado (%3 días).',
+                Customer."No.", Customer.Name, Setup."Overdue Days Threshold");
+            exit;
+        end;
+
+        TempBlob.CreateOutStream(ReportOutStream);
+        CustomerFilter.SetRange("No.", Customer."No.");
+        Report.SaveAs(
+            ReportId,
+            GetReportRequestXml(Customer."No.", CutoffDate),
+            ReportFormat::Pdf,
+            ReportOutStream,
+            CustomerFilter);
+
+        TempBlob.CreateInStream(ReportInStream);
+        FileName := GetPdfFileName(LanguageCode, Customer."No.");
+        DownloadFromStream(ReportInStream, 'Vista previa extracto', '', 'PDF (*.pdf)|*.pdf', FileName);
+    end;
+
     local procedure RunOverdueNotifications(SkipChecks: Boolean)
     var
         Setup: Record "GFL Fin. Comm. Setup";
