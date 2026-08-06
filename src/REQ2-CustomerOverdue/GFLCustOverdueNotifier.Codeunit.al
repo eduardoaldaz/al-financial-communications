@@ -62,6 +62,45 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         RunOverdueNotifications(true);
     end;
 
+    procedure SendOverdueStatementManual(Customer: Record Customer)
+    var
+        Setup: Record "GFL Fin. Comm. Setup";
+        CutoffDate: Date;
+        ReportId: Integer;
+        SendToEmail: Text[250];
+        LanguageCode: Code[10];
+    begin
+        if not Customer."Print Statements" then begin
+            Message('Este cliente no tiene activado el envío de extractos ("Imprimir extractos" = No). No se puede enviar.');
+            exit;
+        end;
+
+        Setup.GetSetup();
+        CutoffDate := CalcDate(StrSubstNo('<-%1D>', Setup."Overdue Days Threshold"), WorkDate());
+        ResolveCustomerConfig(Customer, Setup, ReportId, SendToEmail, LanguageCode);
+
+        if not CustomerHasOverdueEntries(Customer."No.", CutoffDate) then begin
+            Message('El cliente %1 (%2) no tiene facturas vencidas según el umbral configurado (%3 días).',
+                Customer."No.", Customer.Name, Setup."Overdue Days Threshold");
+            exit;
+        end;
+
+        if Customer."GFL Last Statement Sent Date" = WorkDate() then
+            if not Confirm('Ya se envió un extracto a este cliente hoy. ¿Deseas enviarlo de nuevo?', false) then
+                exit;
+
+        if SendToEmail = '' then begin
+            Message('El cliente %1 (%2) no tiene email configurado.', Customer."No.", Customer.Name);
+            exit;
+        end;
+
+        if not Confirm('¿Enviar el extracto de "%1" por correo a %2?', true, Customer.Name, SendToEmail) then
+            exit;
+
+        SendForCustomer(Customer);
+        UpdateLastSentDate(Customer);
+    end;
+
     procedure PreviewOverdueStatement(Customer: Record Customer)
     var
         Setup: Record "GFL Fin. Comm. Setup";

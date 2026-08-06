@@ -9,6 +9,24 @@ pageextension 50302 "GFL Customer Card Ext" extends "Customer Card"
                 Caption = 'Extracto GFL';
                 Image = Report;
 
+                action(GFLSendOverdueStatement)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Enviar extracto';
+                    ToolTip = 'Envía el extracto de deuda pendiente por correo al cliente y lo registra en el histórico de envíos.';
+                    Image = SendEmailPDF;
+                    Promoted = true;
+                    PromotedCategory = Report;
+                    PromotedIsBig = true;
+
+                    trigger OnAction()
+                    var
+                        Notifier: Codeunit "GFL Cust. Overdue Notifier";
+                    begin
+                        Notifier.SendOverdueStatementManual(Rec);
+                        CurrPage.Update(false);
+                    end;
+                }
                 action(GFLPreviewOverdueStatement)
                 {
                     ApplicationArea = All;
@@ -17,7 +35,6 @@ pageextension 50302 "GFL Customer Card Ext" extends "Customer Card"
                     Image = PrintReport;
                     Promoted = true;
                     PromotedCategory = Report;
-                    PromotedIsBig = true;
 
                     trigger OnAction()
                     var
