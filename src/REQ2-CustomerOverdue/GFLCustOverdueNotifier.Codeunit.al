@@ -108,11 +108,14 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         ReportOutStream: OutStream;
         ReportInStream: InStream;
         CustomerFilter: Record Customer;
+        LanguageRec: Record Language;
         ReportId: Integer;
         CutoffDate: Date;
         SendToEmail: Text[250];
         LanguageCode: Code[10];
         FileName: Text;
+        OldLanguageId: Integer;
+        LanguageId: Integer;
     begin
         Setup.GetSetup();
         if Setup."Customer Overdue Report ID" = 0 then
@@ -127,6 +130,15 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
             exit;
         end;
 
+        OldLanguageId := GlobalLanguage();
+        LanguageId := OldLanguageId;
+        if LanguageCode <> '' then begin
+            LanguageRec.SetRange(Code, LanguageCode);
+            if LanguageRec.FindFirst() then
+                LanguageId := LanguageRec."Windows Language ID";
+        end;
+        GlobalLanguage(LanguageId);
+
         TempBlob.CreateOutStream(ReportOutStream);
         CustomerFilter.SetRange("No.", Customer."No.");
         Report.SaveAs(
@@ -135,6 +147,8 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
             ReportFormat::Pdf,
             ReportOutStream,
             CustomerFilter);
+
+        GlobalLanguage(OldLanguageId);
 
         TempBlob.CreateInStream(ReportInStream);
         FileName := GetPdfFileName(LanguageCode, Customer."No.");
