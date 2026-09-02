@@ -154,6 +154,36 @@ page 50300 "GFL Fin. Comm. Setup"
                     Notifier.SendOverdueNotificationsForced();
                 end;
             }
+            action(ActivarImprimirExtractos)
+            {
+                Caption = 'Activar "Imprimir extractos" en todos los clientes';
+                ApplicationArea = All;
+                Image = Customer;
+                ToolTip = 'Activa el campo "Imprimir extractos" en todos los clientes que lo tengan desactivado. Usa esta opción para habilitar el envío masivo y luego desmarca manualmente las excepciones.';
+
+                trigger OnAction()
+                var
+                    Customer: Record Customer;
+                    PendingCount: Integer;
+                begin
+                    Customer.SetRange("Print Statements", false);
+                    PendingCount := Customer.Count();
+
+                    if PendingCount = 0 then begin
+                        Message('Todos los clientes ya tienen "Imprimir extractos" activado.');
+                        exit;
+                    end;
+
+                    if not Confirm(
+                        'Se activará "Imprimir extractos" en %1 cliente(s).\Recuerda desmarcar las excepciones antes del próximo envío (día 1 o 15).\¿Continuar?',
+                        false, PendingCount)
+                    then
+                        exit;
+
+                    Customer.ModifyAll("Print Statements", true);
+                    Message('%1 cliente(s) actualizados correctamente.', PendingCount);
+                end;
+            }
         }
     }
 
