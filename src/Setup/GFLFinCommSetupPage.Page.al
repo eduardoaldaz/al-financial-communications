@@ -31,6 +31,11 @@ page 50300 "GFL Fin. Comm. Setup"
                     ApplicationArea = All;
                     ToolTip = 'Número mínimo de días de vencimiento para incluir una factura en el envío. Ej: 7 = solo facturas vencidas hace 7+ días.';
                 }
+                field("Send Day Of Week"; Rec."Send Day Of Week")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Día de la semana en que se envían los extractos: 1=Lunes, 2=Martes, 3=Miércoles, 4=Jueves, 5=Viernes, 6=Sábado, 7=Domingo. Por defecto: 2 (martes).';
+                }
                 field("Customer Email From Address"; Rec."Customer Email From Address")
                 {
                     ApplicationArea = All;

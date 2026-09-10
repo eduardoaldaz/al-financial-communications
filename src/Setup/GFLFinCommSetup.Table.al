@@ -47,6 +47,14 @@ table 50300 "GFL Fin. Comm. Setup"
             Caption = 'Envío deuda pendiente activo';
             DataClassification = CustomerContent;
         }
+        field(19; "Send Day Of Week"; Integer)
+        {
+            Caption = 'Día de envío (1=Lun … 7=Dom)';
+            DataClassification = CustomerContent;
+            InitValue = 2;
+            MinValue = 1;
+            MaxValue = 7;
+        }
         field(16; "Company Logo"; Media)
         {
             Caption = 'Logo empresa';
@@ -129,6 +137,7 @@ table 50300 "GFL Fin. Comm. Setup"
             Init();
             "Customer Overdue Report ID" := 106;
             "Overdue Days Threshold" := 7;
+            "Send Day Of Week" := 2;
             "Remittance Report ID" := 400;
             "LinkedIn URL" := 'https://www.linkedin.com/company/global-food-link-sl/';
             Insert();

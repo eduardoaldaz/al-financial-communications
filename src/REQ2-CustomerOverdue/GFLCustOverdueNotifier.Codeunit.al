@@ -168,7 +168,7 @@ codeunit 50300 "GFL Cust. Overdue Notifier"
         if not SkipChecks then begin
             if not Setup."Customer Overdue Enabled" then
                 exit;
-            if Date2DWY(WorkDate(), 1) <> 2 then  // 2 = martes
+            if Date2DWY(WorkDate(), 1) <> Setup."Send Day Of Week" then
                 exit;
         end;
 
