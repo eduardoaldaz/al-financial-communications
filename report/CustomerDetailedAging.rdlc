@@ -196,6 +196,30 @@
         <Field Name="EmpresaVAT">
           <DataField>EmpresaVAT</DataField>
         </Field>
+        <Field Name="GFLOpen_DocumentNo">
+          <DataField>GFLOpen_DocumentNo</DataField>
+        </Field>
+        <Field Name="GFLOpen_DocumentType">
+          <DataField>GFLOpen_DocumentType</DataField>
+        </Field>
+        <Field Name="GFLOpen_PostingDate">
+          <DataField>GFLOpen_PostingDate</DataField>
+        </Field>
+        <Field Name="GFLOpen_DueDate">
+          <DataField>GFLOpen_DueDate</DataField>
+        </Field>
+        <Field Name="GFLOpen_Description">
+          <DataField>GFLOpen_Description</DataField>
+        </Field>
+        <Field Name="GFLOpen_YourReference">
+          <DataField>GFLOpen_YourReference</DataField>
+        </Field>
+        <Field Name="GFLOpen_RemainingAmount">
+          <DataField>GFLOpen_RemainingAmount</DataField>
+        </Field>
+        <Field Name="GFLOpen_CurrencyCode">
+          <DataField>GFLOpen_CurrencyCode</DataField>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
