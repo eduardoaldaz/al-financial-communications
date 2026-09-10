@@ -2,6 +2,7 @@ reportextension 50300 "GFL Customer Aging Ext." extends "Customer Detailed Aging
 {
     dataset
     {
+        // ── Columnas extra sobre el DataItem existente de vencidas ───────────
         add("Cust. Ledger Entry")
         {
             column(VAT_No; Customer."VAT Registration No.") { }
@@ -29,15 +30,59 @@ reportextension 50300 "GFL Customer Aging Ext." extends "Customer Detailed Aging
                     CurrReport.Skip();
             end;
         }
+
+        // ── Nuevo DataItem: facturas abiertas NO vencidas ────────────────────
+        // Completamente separado del DataItem de vencidas — no afecta los
+        // totales TempCurrencyTotalBuffer ni la lógica existente.
+        add(Customer)
+        {
+            dataitem(GFLOpenEntry; "Cust. Ledger Entry")
+            {
+                DataItemLink = "Customer No." = field("No.");
+                DataItemLinkReference = Customer;
+                DataItemTableView = sorting("Customer No.", "Currency Code", "Due Date")
+                                   where(Open = const(true));
+
+                trigger OnPreDataItem()
+                var
+                    Setup: Record "GFL Fin. Comm. Setup";
+                    CutoffDate: Date;
+                begin
+                    // Solo facturas/notas de crédito con Due Date > CutoffDate
+                    // (el mismo umbral que separa vencidas de no vencidas)
+                    Setup.GetSetup();
+                    CutoffDate := CalcDate(StrSubstNo('<-%1D>', Setup."Overdue Days Threshold"), WorkDate());
+                    SetFilter("Due Date", '>%1', CutoffDate);
+                    SetFilter("Document Type", '%1|%2',
+                        "Document Type"::Invoice,
+                        "Document Type"::"Credit Memo");
+                end;
+
+                trigger OnAfterGetRecord()
+                begin
+                    CalcFields("Remaining Amount");
+                end;
+
+                column(GFLOpen_DocumentNo; "Document No.") { }
+                column(GFLOpen_DocumentType; "Document Type") { }
+                column(GFLOpen_PostingDate; "Posting Date") { }
+                column(GFLOpen_DueDate; "Due Date") { }
+                column(GFLOpen_Description; Description) { }
+                column(GFLOpen_YourReference; "Your Reference") { }
+                column(GFLOpen_RemainingAmount; "Remaining Amount") { }
+                column(GFLOpen_CurrencyCode; "Currency Code") { }
+            }
+        }
     }
 
-    // Funciones locales para obtener datos de la empresa
+    // ── Funciones locales para datos de la empresa ───────────────────────────
+
     local procedure GetEmpresaNombre(): Text[100]
     var
         Company: Record "Company Information";
     begin
         if Company.Get() then
-            exit(Company.Name);  // <-- CORRECTO: el campo se llama "Name"
+            exit(Company.Name);
         exit('');
     end;
 
