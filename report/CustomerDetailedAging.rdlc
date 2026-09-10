@@ -1842,6 +1842,22 @@
                   <FilterValue>=""</FilterValue>
                 </FilterValues>
               </Filter>
+              <!-- Excluir filas de GFLCompanyInfo (datos de empresa) -->
+              <Filter>
+                <FilterExpression>=Fields!EmpresaNombre.Value</FilterExpression>
+                <Operator>Equal</Operator>
+                <FilterValues>
+                  <FilterValue>=nothing</FilterValue>
+                </FilterValues>
+              </Filter>
+              <!-- Excluir filas de GFLOpenEntry (facturas no vencidas) -->
+              <Filter>
+                <FilterExpression>=Fields!GFLOpen_DocumentNo.Value</FilterExpression>
+                <Operator>Equal</Operator>
+                <FilterValues>
+                  <FilterValue>=nothing</FilterValue>
+                </FilterValues>
+              </Filter>
             </Filters>
             <Top>0.9819cm</Top>
             <Left>0.3175cm</Left>

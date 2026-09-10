@@ -23,13 +23,14 @@ reportextension 50300 "GFL Customer Aging Ext." extends "Customer Detailed Aging
             end;
         }
 
-        // ── Nuevos DataItems hijos de Customer ───────────────────────────────
-        // addlast() es el keyword correcto; solo un bloque por DataItem padre.
-        addlast(Customer)
+        // ── Datos de empresa (hijo de Cust. Ledger Entry) ────────────────────
+        // Company Information tiene siempre 1 registro. Al ser hijo de CLE,
+        // emite una fila por entrada vencida. El RDLC usa First() para obtener
+        // el primer valor — funciona correctamente.
+        // La tablix principal (Table1) lleva filtro adicional para excluir
+        // estas filas del informe de vencidas (EmpresaNombre = nothing).
+        addlast("Cust. Ledger Entry")
         {
-            // Datos de empresa: Company Information tiene siempre 1 registro.
-            // Las columnas referencian campos reales de tabla (evita el problema
-            // de scope de llamadas a procedimientos en reportextension).
             dataitem(GFLCompanyInfo; "Company Information")
             {
                 DataItemTableView = sorting("Primary Key");
@@ -41,9 +42,13 @@ reportextension 50300 "GFL Customer Aging Ext." extends "Customer Detailed Aging
                 column(EmpresaPais; "Country/Region Code") { }
                 column(EmpresaVAT; "VAT Registration No.") { }
             }
+        }
 
-            // Facturas abiertas NO vencidas: completamente separado del DataItem
-            // de vencidas — no afecta TempCurrencyTotalBuffer ni lógica existente.
+        // ── Facturas abiertas NO vencidas (hijo de Customer) ─────────────────
+        // Completamente separado del DataItem de vencidas — no afecta los
+        // totales TempCurrencyTotalBuffer ni la lógica existente.
+        addlast(Customer)
+        {
             dataitem(GFLOpenEntry; "Cust. Ledger Entry")
             {
                 DataItemLink = "Customer No." = field("No.");
