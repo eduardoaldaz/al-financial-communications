@@ -56,6 +56,16 @@ reportextension 50300 "GFL Customer Aging Ext." extends "Customer Detailed Aging
                 DataItemTableView = sorting("Customer No.", "Currency Code", "Due Date")
                                    where(Open = const(true));
 
+                // columnas primero — en addlast() los column() deben preceder a los trigger
+                column(GFLOpen_DocumentNo; "Document No.") { }
+                column(GFLOpen_DocumentType; "Document Type") { }
+                column(GFLOpen_PostingDate; "Posting Date") { }
+                column(GFLOpen_DueDate; "Due Date") { }
+                column(GFLOpen_Description; Description) { }
+                column(GFLOpen_YourReference; "Your Reference") { }
+                column(GFLOpen_RemainingAmount; "Remaining Amount") { }
+                column(GFLOpen_CurrencyCode; "Currency Code") { }
+
                 trigger OnPreDataItem()
                 var
                     Setup: Record "GFL Fin. Comm. Setup";
@@ -73,15 +83,6 @@ reportextension 50300 "GFL Customer Aging Ext." extends "Customer Detailed Aging
                 begin
                     CalcFields("Remaining Amount");
                 end;
-
-                column(GFLOpen_DocumentNo; "Document No.") { }
-                column(GFLOpen_DocumentType; "Document Type") { }
-                column(GFLOpen_PostingDate; "Posting Date") { }
-                column(GFLOpen_DueDate; "Due Date") { }
-                column(GFLOpen_Description; Description) { }
-                column(GFLOpen_YourReference; "Your Reference") { }
-                column(GFLOpen_RemainingAmount; "Remaining Amount") { }
-                column(GFLOpen_CurrencyCode; "Currency Code") { }
             }
         }
     }
